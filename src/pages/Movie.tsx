@@ -6,6 +6,10 @@ import MovieModel from "../models/MovieModel/Moviemodel";
 import MovieHorizontal from "../components/Cards/MovieHorizontalCard";
 import "../styles/Movie.css";
 import { Col, Container, Row } from "react-bootstrap";
+import Recommendations from "../components/MovieDetails/Recommendations";
+import Similar from "../components/MovieDetails/Similar";
+import Review from "../components/MovieDetails/Reviews";
+import CastAndCrew from "../components/MovieDetails/CastAndCrew";
 
 interface Video {
   id: string;
@@ -13,41 +17,12 @@ interface Video {
   name: string;
 }
 
-interface Review {
-  id: string;
-  author: string;
-  content: string;
-}
-
-interface CastMember {
-  id: number;
-  name: string;
-  character: string;
-  profile_path: string;
-}
-
-interface CrewMember {
-  id: number;
-  name: string;
-  job: string;
-  department: string;
-  profile_path: string;
-}
-
 export default function Movie() {
   const { id } = useParams();
   const [movie, setMovie] = useState<IMovieModel | null>(null);
   const [images, setImages] = useState<string[]>([]);
   const [videos, setVideos] = useState<Video[]>([]);
-  const [recommendations, setRecommendations] = useState<IMovieModel[] | null>(
-    null
-  );
-  const [similarMovies, setSimilarMovies] = useState<IMovieModel[] | null>(
-    null
-  );
-  const [cast, setCast] = useState<CastMember[]>([]);
-  const [reviews, setReviews] = useState<Review[]>([]);
-  const [crew, setCrew] = useState<CrewMember[]>([]);
+
   let hours: number | undefined;
   let minutes: number | undefined;
   if (movie?.runtime !== undefined) {
@@ -77,40 +52,6 @@ export default function Movie() {
       setVideos(videoData);
     };
 
-    const fetchMovieRecommendations = async () => {
-      const response = await tmdbService.get(`/movie/${id}/recommendations`);
-      const recommendationData = response.data.results.map(
-        (movieData: any) => new MovieModel(movieData)
-      );
-      setRecommendations(recommendationData);
-    };
-
-    const fetchSimilarMovie = async () => {
-      const response = await tmdbService.get(`/movie/${id}/similar`);
-      const similarData = response.data.results.map(
-        (movieData: any) => new MovieModel(movieData)
-      );
-      setSimilarMovies(similarData);
-    };
-
-    const fetchReviews = async () => {
-      const response = await tmdbService.get(`/movie/${id}/reviews`);
-      setReviews(response.data.results);
-    };
-
-    const fetchCast = async () => {
-      const response = await tmdbService.get(
-        `https://api.themoviedb.org/3/movie/${id}/credits`
-      );
-
-      setCast(response.data.cast);
-      setCrew(response.data.crew);
-    };
-
-    fetchCast();
-    fetchReviews();
-    fetchSimilarMovie();
-    fetchMovieRecommendations();
     fetchMovieVideos();
     fetchMovieImages();
     fetchMovie();
@@ -127,11 +68,11 @@ export default function Movie() {
   return (
     <div className="movie-container">
       <Container>
-        <Row>
-          <Col>
+        <Row style={{ background: "#555", color: "white" }}>
+          <Col sm={9}>
             <h1>{movie.title}</h1>
           </Col>
-          <Col>
+          <Col sm={1}>
             <Row style={{ marginTop: "20px" }}>
               <p>IMDb rating</p>
             </Row>
@@ -139,8 +80,7 @@ export default function Movie() {
               <p style={{ margin: "auto" }}>{roundedVoteAverage}/10</p>
             </Row>
           </Col>
-          <Col></Col>
-          <Col>
+          <Col sm={1}>
             <Row style={{ marginTop: "20px" }}>
               <p>Popularity</p>
             </Row>
@@ -185,6 +125,67 @@ export default function Movie() {
           ))}
         </div>
       </div>
+      {/*
+      <Container style={{ margin: "auto", backgroundColor: "#555" }}>
+        <Row xs="auto">
+          <Col style={{ margin: "10px" }} xs={2}>
+            <img
+              style={{ width: "100%", height: "100%" }}
+              src={`https://image.tmdb.org/t/p/w500${movie.posterPath}`}
+              alt={movie.title}
+            />
+          </Col>
+          <Col xs={6} style={{ margin: "10px" }}>
+            <iframe
+              style={{ width: "100%", height: "100%" }}
+              key={videos[0].key}
+              src={`https://www.youtube.com/embed/${videos[0].key}`}
+            >
+              <p>{videos[0].name}</p>
+            </iframe>
+          </Col>
+          <Col xs lg="2">
+            <Row
+              style={{
+                margin: "10px",
+                display: "flex",
+                overflowX: "scroll",
+                scrollSnapType: "x mandatory",
+                marginBottom: "10px",
+                height: "180px",
+                width: "280px",
+              }}
+            >
+              {videos.map((video) => (
+                <iframe
+                  key={video.key}
+                  src={`https://www.youtube.com/embed/${video.key}`}
+                >
+                  <p>{video.name}</p>
+                </iframe>
+              ))}
+            </Row>
+            <Row
+              style={{
+                margin: "10px",
+                display: "flex",
+                overflowX: "scroll",
+                scrollSnapType: "x mandatory",
+                height: "180px",
+                width: "280px",
+              }}
+            >
+              {images.map((image) => (
+                <img
+                  key={image}
+                  src={`https://image.tmdb.org/t/p/w500${image}`}
+                />
+              ))}
+            </Row>
+          </Col>
+        </Row>
+      </Container>
+*/}
       <div className="movie-info">
         <h2 className="section-heading">Details:</h2>
         <p>{movie.overview}</p>
@@ -194,94 +195,20 @@ export default function Movie() {
         <p>
           Runtime - {hours} hours {minutes} minutes
         </p>
-        <div className="movie-section">
-          <h2 className="section-heading">Recommendations:</h2>
-          <div className="horizontal-scroll-container">
-            {recommendations?.map((recommendation) => (
-              <MovieHorizontal
-                key={recommendation.id}
-                id={recommendation.id}
-                posterPath={recommendation.posterPath}
-                overview={recommendation.overview}
-                title={recommendation.title}
-              />
-            ))}
-          </div>
-        </div>
-        <div className="movie-section">
-          <h2 className="section-heading">Similar Movies:</h2>
-          <div className="horizontal-scroll-container">
-            {similarMovies?.map((similar) => (
-              <MovieHorizontal
-                key={similar.id}
-                id={similar.id}
-                posterPath={similar.posterPath}
-                overview={similar.overview}
-                title={similar.title}
-              />
-            ))}
-          </div>
-        </div>
-        <div className="movie-section">
-          <h2 className="section-heading">Reviews:</h2>
-          <div className="reviews-container">
-            <ul>
-              {reviews.map((review) => (
-                <li key={review.id}>
-                  <strong>{review.author}</strong>
-                  <p>{review.content}</p>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
-        <div className="movie-section">
-          <Container>
-            <h2 className="section-heading">Top Cast:</h2>
-            <Row>
-              {cast.map((person) => (
-                <Col sm={6} md={4} lg={3} className="mb-4" key={person.id}>
-                  <div className="cast-member">
-                    <img
-                      className="cast-image"
-                      src={`https://image.tmdb.org/t/p/w200${person.profile_path}`}
-                      alt={person.name}
-                    />
-                    <div className="cast-details">
-                      <strong>{person.name}</strong>
-                      <p className="character">Character: {person.character}</p>
-                    </div>
-                  </div>
-                </Col>
-              ))}
-            </Row>
-          </Container>
-        </div>
-        <div className="movie-section">
-          <Container>
-            <h2 className="section-heading">Crew:</h2>
-            <Row>
-              {crew.map((person) => (
-                <Col sm={6} md={4} lg={3} className="mb-4" key={person.id}>
-                  <div className="cast-member">
-                    <img
-                      className="cast-image"
-                      src={`https://image.tmdb.org/t/p/w200${person.profile_path}`}
-                      alt={person.name}
-                    />
-                    <div className="cast-details">
-                      <strong>{person.name}</strong>
-                      <p className="character">Job: {person.job}</p>
-                      <p className="character">
-                        Department: {person.department}
-                      </p>
-                    </div>
-                  </div>
-                </Col>
-              ))}
-            </Row>
-          </Container>
-        </div>
+        <p>Budget - {movie.budget}$</p>
+        <p>
+          Genres -{" "}
+          {movie.genres?.map((genre, index) => (
+            <span key={genre.id}>
+              {genre.name}
+              {index !== (movie.genres?.length ?? 0) - 1 ? ", " : ""}
+            </span>
+          ))}
+        </p>
+        <Recommendations />
+        <Similar />
+        <Review />
+        <CastAndCrew />
       </div>
     </div>
   );

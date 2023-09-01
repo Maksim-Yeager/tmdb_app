@@ -14,7 +14,7 @@ function MovieVertical({ id, title, overview, posterPath }: IMovieModel) {
     <Card style={{ minWidth: "300px", minHeight: "205px", maxWidth: "400px", maxHeight: "666px", }}>
       <Card.Img variant="top" src={`https://image.tmdb.org/t/p/w500${posterPath}`} alt={title} />
       <Card.Body>
-        <Card.Title>{title}</Card.Title>
+        <Card.Title>{StringUtil.shortenText(title, 24)}</Card.Title>
         <Card.Text>
           {StringUtil.shortenText(overview, maxWords)}
         </Card.Text>

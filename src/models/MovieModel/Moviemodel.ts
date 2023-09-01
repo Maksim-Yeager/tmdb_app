@@ -1,6 +1,7 @@
+import Genre from "./Genre";
 import IMovieModel from "./IMovieModel";
 
-export default class MovieModel implements IMovieModel {
+export default class MovieModel implements IMovieModel { 
   id: number;
   title: string;
   overview: string;
@@ -11,6 +12,8 @@ export default class MovieModel implements IMovieModel {
   voteAverage: number;
   voteCount: number;
   runtime: number;
+  budget: number;
+  genres: Genre[];
 
   constructor();
   constructor(obj?: IMovieModel);
@@ -25,5 +28,7 @@ export default class MovieModel implements IMovieModel {
     this.voteAverage = obj && (obj.voteAverage || obj.vote_average);
     this.voteCount = obj && (obj.voteCount || obj.vote_count);
     this.runtime = obj && obj.runtime;
+    this.budget = obj && obj.budget;
+    this.genres = obj && obj.genres;
   }
 }

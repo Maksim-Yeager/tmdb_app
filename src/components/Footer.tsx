@@ -51,7 +51,7 @@ export default function Footer() {
               Products
             </p>
             <CDBBox
-              flex="column"
+              flex="column" 
               style={{ cursor: "pointer", padding: "0" }}
             ></CDBBox>
           </CDBBox>

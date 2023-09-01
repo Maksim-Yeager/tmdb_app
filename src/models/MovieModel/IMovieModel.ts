@@ -1,3 +1,5 @@
+import Genre from "./Genre";
+
 export default interface IMovieModel {
     id: number;
     title: string;
@@ -9,4 +11,6 @@ export default interface IMovieModel {
     voteAverage?: number;
     voteCount?: number;
     runtime?: number;
+    budget?: number;
+    genres?: Genre[];
 }

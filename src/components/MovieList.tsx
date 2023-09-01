@@ -14,13 +14,14 @@ type CategoryProps = {
 
 let categoryName: string;
 
-function Category({
+function MovieList({
   category,
   cardShowType = MovieCardTypes.VERTICAL,
 }: CategoryProps) {
   const [movies, setMovies] = useState<IMovieModel[]>([]);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [loading, setLoading] = useState<boolean>(false);
+  const [totalPages, setTotalPages] = useState<number>(1);
 
   const containerRef = useRef<HTMLDivElement | null>(null);
 
@@ -33,7 +34,12 @@ function Category({
       const newMovies = response.data.results.map(
         (v: IMovieModel) => new MovieModel(v)
       );
-      setMovies((prevMovies) => [...prevMovies, ...newMovies]);
+      if (currentPage === 1) {
+        setMovies(newMovies);
+      } else {
+        setMovies((prevMovies) => [...prevMovies, ...newMovies]);
+      }
+      setTotalPages(response.data.total_pages);
       setLoading(false);
     };
 
@@ -42,17 +48,17 @@ function Category({
 
   useEffect(() => {
     setCurrentPage(1);
+    setMovies([]);
   }, [category]);
 
   function handleScroll() {
     if (
-      containerRef.current &&
-      !loading &&
+      containerRef?.current &&
       containerRef.current.scrollLeft + containerRef.current.clientWidth >=
-        containerRef.current.scrollWidth
+        containerRef.current.scrollWidth - 3
     ) {
       setCurrentPage((prevPage) => prevPage + 1);
-    }
+    } 
   }
 
   useEffect(() => {
@@ -62,7 +68,7 @@ function Category({
         containerRef.current?.removeEventListener("scroll", handleScroll);
       };
     }
-  }, []);
+  }, [currentPage]);
 
   category === "top_rated"
     ? (categoryName = "Top Rated")
@@ -85,12 +91,14 @@ function Category({
           overflowY: "hidden",
           scrollSnapType: "x mandatory",
           border: "solid 3px black",
+          borderRadius: "10px",
         }}
       >
         {movies.map((movie) => (
           <div key={movie.id}>
             {cardShowType === MovieCardTypes.VERTICAL && (
               <MovieVertical
+                key={movie.id}
                 id={movie.id}
                 title={movie.title}
                 overview={movie.overview}
@@ -99,6 +107,7 @@ function Category({
             )}
             {cardShowType === MovieCardTypes.HORIZONTAL && (
               <MovieHorizontal
+                key={movie.id}
                 id={movie.id}
                 title={movie.title}
                 overview={movie.overview}
@@ -113,4 +122,4 @@ function Category({
   );
 }
 
-export default Category;
+export default MovieList;

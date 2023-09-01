@@ -25,7 +25,7 @@ function MovieHorizontal({ id, title, overview, posterPath }: IMovieModel) {
         </Col>
         <Col>
           <Card.Body>
-            <Card.Title style={{ fontSize: 12 }}>{title}</Card.Title>
+            <Card.Title style={{ fontSize: 12 }}>{StringUtil.shortenText(title, 27)}</Card.Title>
             <Card.Text className="card-text" style={{ fontSize: 12 }}>{StringUtil.shortenText(overview, maxWords)}</Card.Text>
             <Link to={`/movie-details/${id}`}>
               <Button variant="primary">Read more</Button>

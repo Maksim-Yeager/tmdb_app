@@ -25,7 +25,7 @@ const Home: React.FC = () => {
   }
   return (
     <div>
-      <ButtonGroup aria-label="Basic example">
+      <ButtonGroup style={{margin: "10px"}} aria-label="Basic example">
         <Button variant="warning" onClick={hendleOnClickVertical}>
           <img style={{width: "30px"}} src="/images/view-1.png" alt="View 1" />
         </Button>
