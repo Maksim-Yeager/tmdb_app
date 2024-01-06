@@ -44,3 +44,12 @@ You don’t have to ever use `eject`. The curated feature set is suitable for sm
 You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
 
 To learn React, check out the [React documentation](https://reactjs.org/).
+
+## Set Environment Variables
+
+Create a .env file in the root directory of your project and add the following lines:
+
+REACT_APP_TOKEN="YOUR TMDB TOKEN"
+REACT_APP_API="https://api.themoviedb.org/3/"
+REACT_APP_KEY="YOUR TMDB KEY"
+Replace the placeholder values with your actual API token and key.
